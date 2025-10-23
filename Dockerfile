@@ -1,12 +1,14 @@
-# Use official .NET SDK image to build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
-
-# Use runtime image
+# Use .NET 8 runtime (lightweight image, no SDK)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+# Set working directory
 WORKDIR /app
-COPY --from=build /app/out .
+
+# Copy all published files into the container
+COPY . .
+
+# Expose Render's port
+EXPOSE 10000
+
+# Run your already published app
 ENTRYPOINT ["dotnet", "StudentTest.dll"]
